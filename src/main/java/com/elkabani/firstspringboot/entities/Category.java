@@ -3,6 +3,7 @@ package com.elkabani.firstspringboot.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -21,6 +22,16 @@ public class Category {
     @Column(name="name", nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "category")
-    private List<Product> products;
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval=true)
+    @Builder.Default
+    private List<Product> products = new ArrayList<>();
+
+    public void addProduct(Product product) {
+        products.add(product);
+        product.setCategory(this);
+    }
+    public void removeProduct(Product product) {
+        products.remove(product);
+        product.setCategory(null);
+    }
 }
